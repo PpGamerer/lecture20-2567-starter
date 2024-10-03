@@ -1,7 +1,7 @@
 "use client";
 
 import { $authenStore } from "@lib/authenStore";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import axios from "axios";
 
@@ -33,9 +33,19 @@ export default function RootLayout({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
+  const pathname = usePathname();
+  // console.log(pathname);
+
   const checkAuthen = async () => {
     const token = localStorage.getItem("token");
     const authenUsername = localStorage.getItem("authenUsername");
+
+    // if (token && authenUsername) {
+    //   $authenStore.set({
+    //     token: token,
+    //     authenUsername: authenUsername,
+    //   });
+    // }
 
     //check within localStorage
     let isTokenValid = true;
@@ -56,7 +66,9 @@ export default function RootLayout({
         //mark as unauthorized
       }
     }
-
+    if (pathname !== "/" && !isTokenValid){
+      router.push("/");
+    }
     //go to login if not logged in yet and trying to access protected route
 
     //go to /student if already logged in
@@ -71,9 +83,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <MantineProvider>
           {/* hide page content with loader */}
-          <Group align="center">
+          {/* <Group align="center">
               <Loader />
-            </Group>
+            </Group> */}
           <Container size="sm">
             <Title fs="italic" ta="center" c="violet" my="xs">
               Course Enrollment

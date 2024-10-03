@@ -15,6 +15,8 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+import { useRouter } from "next/navigation";
+
 export default function Home() {
   // All courses state
   const [courses, setCourses] = useState<Course[] | null>(null);
@@ -26,6 +28,7 @@ export default function Home() {
   const [loadingLogin, setLoadingLogin] = useState(false);
 
   // declare useRouter
+  const router = useRouter();
 
   const loadCourses = async () => {
     setLoadingCourses(true);
@@ -46,8 +49,15 @@ export default function Home() {
       localStorage.setItem("authenUsername", resp.data.username);
 
       //save token and authenUsername to global store
+      $authenStore.set({
+        token: resp.data.token,
+        authenUsername: resp.data.username,
+      });
+
 
       //navigate to /student
+      router.push("/student");
+
     } catch (error) {
       if (error.response) alert(error.response.data.message);
       else alert(error.message);
